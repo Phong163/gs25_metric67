@@ -143,8 +143,9 @@ class CustomerTracker:
                         self.track_person[track_id]["feature"] = feature
                         self.track_person[matched_id]["reid"] = True
                     else:
+                        date_time = datetime.now(pytz.timezone("Asia/Ho_Chi_Minh")).strftime("%d-%m-%Y_%H-%M")
                         self.track_person[track_id] = {
-                            "name_track_id": f"{track_id}",
+                            "name_track_id": f"{track_id}_{date_time}_{self.camera_id}_{int(tlbr[0])}-{int(tlbr[1])}",
                             "start_time_1": time.time(),
                             "interacted_quantity": 0,
                             "total_time": 0,
