@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+import cv2
 import numpy as np
 import pytz
 import torch
@@ -71,6 +72,12 @@ def get_zone_coords(frame, zone_relative):
 
 def is_box_in_zone(box, zone_coords, score):
     x1, y1, x2, y2 = box
+    center_x = (x1 + x2) // 2
+    center_y = (y1 + y2) // 2
+    # Kiểm tra xem tâm của box có nằm trong vùng không
+    if cv2.pointPolygonTest(zone_coords[0], (center_x, center_y), False) >= 0:
+        return True
+    # Kiểm tra IoU như một phương pháp dự phòng
     box_area = [(x1, y1, x2, y2)]
     zone_points = zone_coords[0]
     zone_x = [point[0] for point in zone_points]
