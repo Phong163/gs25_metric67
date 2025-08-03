@@ -175,8 +175,8 @@ class CustomerTracker:
         # Remove old tracks
         to_remove = []
         for t_id, info in self.track_person.items():
-            if self.current_frame - info["last_seen_frame"] > 100:
-                if info["total_time"] > 5 and info["interacted_quantity"] > 0 and not info["reid"]:
+            if self.current_frame - info["last_seen_frame"] > 200:
+                if info["total_time"] > 10 and info["interacted_quantity"] > 0 and not info["reid"]:
                     send_time_to_kafka(self.camera_id, info["name_track_id"], info["interacted_quantity"])
                 to_remove.append(t_id)
         for t_id in to_remove:
@@ -197,9 +197,9 @@ class CustomerTracker:
             annotated_frame = self.process_frame(frame)
             if self.save_video:
                 self.out.write(annotated_frame)
-                # cv2.imshow(f"Camera {self.camera_id}", annotated_frame)
-                # if cv2.waitKey(1) & 0xFF == ord("q"):
-                #     break
+                cv2.imshow(f"Camera {self.camera_id}", annotated_frame)
+                if cv2.waitKey(1) & 0xFF == ord("q"):
+                    break
 
         self.rtsp_stream.stop()
         if self.save_video and hasattr(self, 'out'):
