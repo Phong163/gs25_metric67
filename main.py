@@ -51,6 +51,7 @@ class CustomerTracker:
         self.camera_id = camera_id
         self.zone_1 = config["zone_1"]
         self.zone_2 = config["zone_2"]
+        self.zone_3 = config.get('zone_3')
         self.track_person = config["track_person"]
         self.current_frame = config["current_frame"]
         self.output_path = output_path
@@ -93,6 +94,8 @@ class CustomerTracker:
         # Get zone coordinates
         zone_coords_1 = get_zone_coords(annotated_frame, self.zone_1)
         zone_coords_2 = get_zone_coords(annotated_frame, self.zone_2)
+        if self.zone_3:
+            zone_coords_3 = get_zone_coords(annotated_frame, self.zone_3)
         # Perform detection
         results = self.model.predict(frame_resize, stream=True, conf=0.6, iou=0.6, verbose=False)
         detections = []
@@ -124,8 +127,12 @@ class CustomerTracker:
             box = (int(tlbr[0]), int(tlbr[1]), int(tlbr[2]), int(tlbr[3]))
 
             if track_id in track_customer:
-                hand_box = make_hand(box)
-                cv2.rectangle(annotated_frame, (hand_box[0], hand_box[1]), (hand_box[2], hand_box[3]), (0, 0, 255), 2)
+                hand_box_right = make_hand(box, "right")
+                if self.zone_3:
+                    hand_box_left = make_hand(box, "left")
+                    cv2.rectangle(annotated_frame, (hand_box_left[0], hand_box_left[1]), (hand_box_left[2], hand_box_left[3]), (0, 0, 255), 2)
+                cv2.rectangle(annotated_frame, (hand_box_right[0], hand_box_right[1]), (hand_box_right[2], hand_box_right[3]), (0, 0, 255), 2)
+                
                 if track_id not in self.track_person:
                     feature, crop = extract_feature(self.extractor, frame, box)
                     if feature is None:
@@ -157,9 +164,11 @@ class CustomerTracker:
                     self.track_person[track_id]["last_seen_frame"] = self.current_frame
                 self.track_person[track_id]["total_time"] = time.time() - self.track_person[track_id]["start_time_1"]
                 # Kiểm tra xem tay có nằm trong zone 2 không
-                if is_box_in_zone(hand_box, zone_coords_2, 0.1):
+                if is_box_in_zone(hand_box_right, zone_coords_2, 0.1):
                     self.track_person[track_id]["interacted_quantity"] = 1
-
+                if self.zone_3:
+                    if is_box_in_zone(hand_box_left, zone_coords_3, 0.1): 
+                        self.track_person[track_id]["interacted_quantity"] = 1
                 if self.save_video:
                     cv2.putText(
                         annotated_frame,
@@ -184,8 +193,9 @@ class CustomerTracker:
         # Draw zone
         if self.save_video:
             cv2.polylines(annotated_frame, zone_coords_1, isClosed=True, color=(0, 0, 255), thickness=2)
-            if zone_coords_2 is not None:
-                cv2.polylines(annotated_frame, zone_coords_2, isClosed=True, color=(0, 0, 255), thickness=2)
+            cv2.polylines(annotated_frame, zone_coords_2, isClosed=True, color=(0, 0, 255), thickness=2)
+            if self.zone_3:
+                cv2.polylines(annotated_frame, zone_coords_3, isClosed=True, color=(0, 0, 255), thickness=2)
         return annotated_frame
     def run(self):
         """Main loop to process RTSP stream."""

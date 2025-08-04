@@ -127,7 +127,7 @@ def send_time_to_kafka(zone_id, customer_id, interaction_quantity, bootstrap_ser
     dt = datetime.now(pytz.timezone("Asia/Ho_Chi_Minh")).timestamp()
     timestamp = int(dt)
     data = {
-        "box_id": "d43050fd-7296-4409-ad54-757af392a0d2",   #str
+        "box_id": "d2329d74-0219-47d3-ae75-32c12fe95723",   #str
         "metric": 67, 
         "customer_id": customer_id, #str
         "zone_id" : zone_id,
