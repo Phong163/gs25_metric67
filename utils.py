@@ -96,7 +96,19 @@ def rescale(frame, img_size, x_min, y_min, x_max, y_max):
     return x_min * scale_x, y_min * scale_y, x_max * scale_x, y_max * scale_y
 
 
-
+# Biến toàn cục để lưu trữ instance Producer
+_producer = None
+_producer_config = {
+    'bootstrap.servers': 'hcm.gateway01.cxview.ai:9094',
+    'client.id': 'python-producer',
+    'security.protocol': 'SSL',
+    'ssl.ca.location': './cert/ca-root.pem',
+    'ssl.certificate.location': './cert/ca-cert.pem',
+    'ssl.key.location': './cert/ca-key.pem',
+    'retries': 100,  # Thêm retry để tăng độ tin cậy
+    'retry.backoff.ms': 1000,  # Chờ 1 giây giữa các lần thử
+    'debug': 'security'
+}
 def get_producer():
     """Lấy hoặc khởi tạo Producer một lần duy nhất."""
     global _producer
