@@ -1,4 +1,20 @@
 camera_configs = {
+    0: {
+        "rtsp_url": "rtsp://cxview:gs252525@42.1.117.16:554/Streaming/Channels/101",
+        "zone_1": [
+            (0.504, 0.460),  # Điểm 1
+            (0.01, 0.764),  # Điểm 2
+            (0.066, 0.996),  # Điểm 3
+            (0.656, 0.996),   # Điểm 4
+            (0.460, 0.77),  # Điểm 5
+            (0.664, 0.577), # # Điểm 6
+        ],
+        "zone_2": [
+            (0.57, 0.04), (0.04, 0.18), (0.11, 0.63), (0.59, 0.35)
+        ],
+        "track_person": {},
+        "current_frame": 0
+    },
     1: {
         "rtsp_url": "rtsp://cxview:gs252525@42.1.117.16:554/Streaming/Channels/701",
         "zone_1": [
