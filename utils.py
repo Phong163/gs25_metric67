@@ -108,7 +108,7 @@ def get_producer():
             raise
     return _producer
 
-def send_time_to_kafka(zone_id, customer_id, interaction_quantity, bootstrap_servers="hcm.gateway01.cxview.ai:9094", topic="production-boxv2-peoplecount"):
+def send_time_to_kafka(zone_id, customer_id, interaction_quantity, bootstrap_servers="hcm.gateway01.cxview.ai:9094", topic="production-gatewayhn-peoplecount"):
     """Gửi thông điệp đến Kafka topic, sử dụng Producer chung."""
     # Lấy timestamp theo múi giờ Asia/Ho_Chi_Minh
     dt = datetime.now(pytz.timezone("Asia/Ho_Chi_Minh")).timestamp()
